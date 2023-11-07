@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\PacientController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,3 +16,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::get('pacient/vista01', [PacientController::class, 'vista01']);
+Route::get('/crear-copia-de-seguridad', [PacientController::class, 'crearCopiaDeSeguridad'])
+    ->name('crear-copia-de-seguridad');
+
+Route::view('updateMedicament', 'updateMedicament');
+Route::post('updateMedicament', 'PacientController@updateMedicamentName')->name('updateMedicament');
+
+
