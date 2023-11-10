@@ -18,9 +18,16 @@ Route::get('/', function () {
 });
 
 
-Route::get('pacient/vista01', [PacientController::class, 'vista01']);
-Route::get('/crear-copia-de-seguridad', [PacientController::class, 'crearCopiaDeSeguridad'])
+Route::get('pacient/pacientesTotal', [PacientController::class, 'pacientesTotal']);
+Route::get('pacient/pacientesInactivos', [PacientController::class, 'pacientesInactivos']);
+Route::get('pacient/pacientesActivos', [PacientController::class, 'pacientesActivos']);
+
+Route::get('admin/respaldo', [AdminController::class, 'crearCopiaDeSeguridad'])->name('backup.create');
+Route::get('admin/respaldo', [AdminController::class, 'crearCopiaDeSeguridad'])    
     ->name('crear-copia-de-seguridad');
+
+    Route::get('pacient/transaccion', [PacientController::class, 'actualizarDatos']);
+
 
 Route::view('updateMedicament', 'updateMedicament');
 Route::post('updateMedicament', 'PacientController@updateMedicamentName')->name('updateMedicament');

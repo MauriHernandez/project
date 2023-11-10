@@ -8,6 +8,7 @@ use Spatie\Backup\Tasks\Backup\BackupJob;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Process\Process;
+use Illuminate\Http\Request;
 
 class PacientController extends Controller
 {
@@ -16,40 +17,82 @@ class PacientController extends Controller
         //
     }
 
-    public function vista01()
+    public function pacientesTotal()
 {
-
-
-
-    $pacients = DB::table('infoPacient AS IP')
-        ->leftJoin('infoDoctor AS ID', 'IP.user_id', '=', 'ID.user_idD')
-        ->leftJoin('infoNurse AS INU', 'IP.user_id', '=', 'INU.user_idN')
-        ->select(
-            'IP.id AS patient_id',
-            'IP.name AS patient_name',
-            'ID.id AS doctor_id',
-            'ID.name AS doctor_name',
-            'INU.id AS nurse_id',
-            'INU.name AS nurse_name'
-        )        ->get();
-    
-    $data = [
-        'pacients' => $pacients
+    $pacients = DB::table('infoPacient')
+    ->select(
+        'id', 'name', 'lastnameP', 'lastnameM'  
+    )
+    ->get();
+ 
+    $data=[
+        'pacients'=>$pacients
     ];
-    
-    return view('pacient/vista01', $data);
+
+    return 
+
+    view('pacient/pacientesTotal', $data);
     
 
 }
-public function crearCopiaDeSeguridad()
+
+public function pacientesInactivos()
 {
-    try {
-        $backupJob = (new BackupJob())->run();
+    $pacients= DB::table ('infoPacient')
+    ->select (
+        'id', 'name', 'lastnameP', 'lastnameM' 
+    ) 
+    ->where ('status', '=', '0')
+    ->get();
+ 
+    $data=[
+        'pacients'=>$pacients
+    ];
 
-        return "Copia de seguridad creada correctamente en " . $backupJob->backupDestination()->backupName();
-    } catch (\Exception $e) {
-        return "Error al crear la copia de seguridad: " . $e->getMessage();
-    }
+    return 
+    
+    view('pacient/pacientesInactivos', $data);
 }
+
+
+public function pacientesActivos()
+{
+    $pacients= DB::table ('infoPacient')
+    ->select (
+        'id', 'name', 'lastnameP', 'lastnameM' 
+    ) 
+    ->where ('status', '=', '1')
+    ->get();
+ 
+    $data=[
+        'pacients'=>$pacients
+    ];
+
+    return 
+ 
+    view('pacient/pacientesInactivos', $data);
+}
+
+public function actualizarDatos(Request $request)
+    {
+       
+        DB::beginTransaction();
+
+        try {
+           
+            DB::table('infopacient')->update(['name' => 'Carlos Mauricio']);
+            DB::table('infopacient')->delete();
+
+           
+            DB::commit();
+
+            return "Operaciones exitosas";
+        } catch (\Exception $e) {
+          
+            DB::rollback();
+
+            return "Error: " . $e->getMessage();
+        }
+    }
 }
 
